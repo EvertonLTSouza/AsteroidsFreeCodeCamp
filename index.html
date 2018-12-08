@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Todo</title>
+    <style></style>
+</head>
+<body>
+    <canvas id="output_canvas" width="700" height="500"></canvas>
+    <script>
+        const FPS = 30; // Frames per Second
+        const SHIP_SIZE = 30; // ship height in pixels
+        const TURN_SPEED = 360; // turn speed in degrees per second
+
+        /** @type {HTMLCanvasElement} */
+        var canv = document.getElementById("output_canvas");
+        var ctx = canv.getContext("2d");
+        
+        var ship = {
+            x: canv.width / 2,
+            y: canv.height / 2,
+            r: SHIP_SIZE /2,
+            a: 90 / 180 * Math.PI,   // converted to radians
+            rot: 0,
+        }
+
+        //set up the game loop
+        setInterval(update, 1000 / FPS);
+        
+        function keydown(/** @type {KeybordEvent}*/ ev ){
+            switch(ev.keycode){
+                case 37: //left arrow (rotate ship left)
+
+                break;
+                case 38: // up arrow (move the ship foward)
+
+                break;
+                case 39: //right arrow (rotate the ship right)
+
+                break;
+            }
+        }
+
+        function update(){
+            // drawn background
+            ctx.fillStyle = "black";
+            ctx.fillRect(0,0,canv.width, canv.height);
+
+
+            //set up event handellers
+            document.addEventListener("keydown", keydown);
+            document.addEventListener("keyup", keyup);
+
+            // drawn the ship
+            ctx.strokeStyle = "white";
+            ctx.lineWidth = SHIP_SIZE / 20;
+            ctx. beginPath();
+            ctx.moveTo( // nose of the ship
+                ship.x + 4 / 3 * ship.r * Math.cos(ship.a),
+                ship.y - 4 / 3 * ship.r * Math.sin(ship.a)
+            );
+
+            ctx.lineTo( //rear left
+                ship.x - ship.r * (2 / 3 * Math.cos(ship.a) + Math.sin(ship.a)),
+                ship.y + ship.r * (2 / 3 * Math.sin(ship.a) - Math.cos(ship.a))
+            );
+
+            ctx.lineTo( // rear right
+                ship.x - ship.r * (2 / 3 * Math.cos(ship.a) - Math.sin(ship.a)),
+                ship.y + ship.r * (2 / 3 * Math.sin(ship.a) + Math.cos(ship.a))
+            );
+            ctx.closePath();
+
+            ctx.stroke();
+
+            
+            // move the ship
+            
+
+
+            // rotate the ship
+
+
+        }
+
+    </script>    
+</body>
+
+</html>
