@@ -9,8 +9,10 @@
 <body>
     <canvas id="output_canvas" width="700" height="500"></canvas>
     <script>
-        const FPS = 30; // Frames per Second
+        const FPS = 120; // Frames per Second
+        const FRICTION = 0.7; // Friction coeficient of space
         const SHIP_SIZE = 30; // ship height in pixels
+        const SHIP_THRUST = 5 // Rate of acceleration
         const TURN_SPEED = 360; // turn speed in degrees per second
 
         /** @type {HTMLCanvasElement} */
@@ -23,21 +25,40 @@
             r: SHIP_SIZE /2,
             a: 90 / 180 * Math.PI,   // converted to radians
             rot: 0,
+            thrusting: false,
+            thrust: {
+                x: 0,
+                y: 0,
+            }
         }
 
         //set up the game loop
         setInterval(update, 1000 / FPS);
         
-        function keydown(/** @type {KeybordEvent}*/ ev ){
-            switch(ev.keycode){
+        function keydown(/** @type {KeybordEvent} */ ev){
+            switch(ev.keyCode){
                 case 37: //left arrow (rotate ship left)
-
+                    ship.rot = TURN_SPEED / 180 * Math.PI / FPS;
                 break;
                 case 38: // up arrow (move the ship foward)
-
+                    ship.thrusting = true;
                 break;
                 case 39: //right arrow (rotate the ship right)
+                    ship.rot = - TURN_SPEED / 180 * Math.PI / FPS;
+                break;
+            }
+        }
 
+        function keyup(/** @type {KeybordEvent} */ ev){
+            switch(ev.keyCode){
+                case 37: //left arrow (rotate ship left)
+                    ship.rot = 0;
+                break;
+                case 38: // up arrow (move the ship foward)
+                    ship.thrusting = false;
+                break;
+                case 39: //right arrow (rotate the ship right)
+                    ship.rot = 0;
                 break;
             }
         }
@@ -51,6 +72,28 @@
             //set up event handellers
             document.addEventListener("keydown", keydown);
             document.addEventListener("keyup", keyup);
+            
+            // Thrst the ship
+            if(ship.thrusting){
+                ship.thrust.x += SHIP_THRUST * Math.cos(ship.a) / FPS;
+                ship.thrust.y -= SHIP_THRUST * Math.sin(ship.a) / FPS;
+            } else {
+                ship.thrust.x -= ship.thrust.x * FRICTION / FPS;
+                ship.thrust.y -= ship.thrust.y * FRICTION / FPS;
+            }
+            
+            //Handeling the edge of the screen
+            if(ship.x < 0 - ship.r) {
+                ship.x = canv.width + ship.r;
+            } else if (ship.x > canv.width + ship.r){
+                ship.x = 0 - ship.r;
+            }
+            
+            if(ship.y < 0 - ship.r) {
+                ship.y = canv.height + ship.r;
+            } else if (ship.y > canv.height + ship.r){
+                ship.y = 0 - ship.r;
+            }
 
             // drawn the ship
             ctx.strokeStyle = "white";
@@ -73,11 +116,13 @@
             ctx.closePath();
 
             ctx.stroke();
-
             
+            //rotate the ship
+            ship.a += ship.rot;
+
             // move the ship
-            
-
+            ship.x += ship.thrust.x;
+            ship.y += ship.thrust.y;
 
             // rotate the ship
 
