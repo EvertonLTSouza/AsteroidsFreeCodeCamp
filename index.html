@@ -77,6 +77,31 @@
             if(ship.thrusting){
                 ship.thrust.x += SHIP_THRUST * Math.cos(ship.a) / FPS;
                 ship.thrust.y -= SHIP_THRUST * Math.sin(ship.a) / FPS;
+
+
+                // draw the trhuster
+                ctx.fillStyle = "Yellow";
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = SHIP_SIZE / 10;
+                ctx. beginPath();
+                ctx.moveTo( // rear left
+                    ship.x - ship.r * (2 / 3 * Math.cos(ship.a) + 0.5 * Math.sin(ship.a)),
+                    ship.y + ship.r * (2 / 3 * Math.sin(ship.a) - 0.5 * Math.cos(ship.a))
+                );
+
+                ctx.lineTo( //rear center behind the ship
+                    ship.x - ship.r * 6 / 3 * Math.cos(ship.a),
+                    ship.y + ship.r * 6 / 3 * Math.sin(ship.a)
+                );
+
+                ctx.lineTo( // rear right
+                    ship.x - ship.r * (2 / 3 * Math.cos(ship.a) - 0.5 * Math.sin(ship.a)),
+                    ship.y + ship.r * (2 / 3 * Math.sin(ship.a) + 0.5 * Math.cos(ship.a))
+                );
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
             } else {
                 ship.thrust.x -= ship.thrust.x * FRICTION / FPS;
                 ship.thrust.y -= ship.thrust.y * FRICTION / FPS;
