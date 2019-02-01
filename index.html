@@ -9,10 +9,10 @@
 <body>
     <canvas id="output_canvas" width="700" height="500"></canvas>
     <script>
-        const FPS = 90; // Frames per Second
+        const FPS = 120; // Frames per Second
         const FRICTION = 0.7; // Friction coeficient of space
         const ROIDS_JAG = 0.45; // Jag of asteroids 0 = none 1 = lots
-        const ROIDS_NUM = 5; // starting number of roids
+        const ROIDS_NUM = 50; // starting number of roids
         const ROIDS_SIZE = 100; // starting size of asteroids in pixels
         const ROIDS_SPEED = 100; // max starting speed
         const ROIDS_VERT = 10; // generate roids sides 
@@ -66,6 +66,10 @@
 
         function keydown(/** @type {KeybordEvent} */ ev){
             switch(ev.keyCode){
+                case 32: //spacebar start shooting
+                    //ship.shooting = true;
+                        shoots.push(newShoot(ship.x, ship.y, ship.r, ship.a));
+                break;
                 case 37: //left arrow (rotate ship left)
                     ship.rot = TURN_SPEED / 180 * Math.PI / FPS;
                 break;
@@ -74,9 +78,6 @@
                 break;
                 case 39: //right arrow (rotate the ship right)
                     ship.rot = - TURN_SPEED / 180 * Math.PI / FPS;
-                break;
-                case 32: //spacebar start shooting
-                    ship.shooting = true;
                 break;
             }
         }
@@ -91,9 +92,6 @@
                 break;
                 case 39: //right arrow (rotate the ship right)
                     ship.rot = 0;
-                break;
-                case 32: //spacebar start shooting
-                    ship.shooting = false;
                 break;
             }
         }
@@ -129,7 +127,7 @@
                 blinkTime: Math.ceil(SHIP_BLINK * FPS),
                 rot: 0,
                 thrusting: false,
-                shooting: true,
+                shooting: false,
                 change: 0, //ship has a charge when this number is 0
                 thrust: {
                     x: 0,
@@ -245,10 +243,11 @@
                     shoots[i].x,
                     shoots[i].y 
                 );
-                ctx.lineTo(
-                    shoots[i].x - 10 * Math.cos(shoots[i].a),
-                    shoots[i].y + 10 * Math.sin(shoots[i].a)
-                );
+                ctx.arc(shoots[i].x, shoots[i].y, ship.r * 0.1, 0, Math.PI * 2, false);
+                // ctx.lineTo(
+                //     shoots[i].x - 10 * Math.cos(shoots[i].a),
+                //     shoots[i].y + 10 * Math.sin(shoots[i].a)
+                // );
                 ctx.stroke();
 
                 shoots[i].x += SHOOT_SPEED * Math.cos(shoots[i].a);
@@ -407,11 +406,11 @@
            }
             
            //Destroyng asteroids
-           if (roids.length > 0){
-            for (i = 0; i < roids.length; i++){
-                for (j = 0; j < shoots.length; j++){
+        
+            for (i = roids.length -1; i >= 0; i--){
+                for (j = shoots.length -1; j >= 0; j--){
                     if(distanceBtwPoints(shoots[j].x, shoots[j].y,roids[i].x,roids[i].y) < roids[i].r){
-                        if (roids[i].r < ROIDS_SIZE / 6){
+                        if (roids[i].r < ROIDS_SIZE / 4){
                             roids.splice(i,1);
                             shoots.splice(j,1);
                         } else {
@@ -423,7 +422,7 @@
                     }
                 }
             }
-           }
+           
 
         }
 
